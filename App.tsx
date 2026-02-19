@@ -19,6 +19,7 @@ import { Matrix } from './components/Matrix.tsx';
 import { TheBag } from './components/TheBag.tsx';
 import { Combine } from './components/Combine.tsx';
 import { AppView, Wedge, WedgeInput, CombineSession } from './types.ts';
+import { Profile } from './components/Profile.tsx';
 
 export default function App() {
   const { user, firebaseUser, isLoading } = useAuth();
@@ -59,13 +60,19 @@ export default function App() {
 
   // ── CRUD ───────────────────────────────────────────────────────────────────
   const addWedge = useCallback(async (input: WedgeInput) => {
-    if (!firebaseUser) return;
-    await addDoc(collection(db, 'wedges'), {
-      ...input,
-      userId: firebaseUser.uid,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    });
+    if (!firebaseUser) throw new Error('Not signed in');
+    const timeout = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('Save timed out — check your connection and try again')), 10_000)
+    );
+    await Promise.race([
+      addDoc(collection(db, 'wedges'), {
+        ...input,
+        userId: firebaseUser.uid,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      }),
+      timeout,
+    ]);
   }, [firebaseUser]);
 
   const deleteWedge = useCallback(async (id: string) => {
@@ -141,6 +148,7 @@ export default function App() {
           }}
         />
       )}
+      {view === 'profile' && <Profile />}
       {view === 'combine' && !combineWedge && (
         <div className="px-4 py-6">
           <h2 className="text-xl font-bold text-gray-800 mb-2">Combine</h2>

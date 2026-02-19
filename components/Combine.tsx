@@ -18,7 +18,10 @@ const computeAverage = (shots: number[]): number => {
   return Math.round(trimmed.reduce((sum, s) => sum + s, 0) / trimmed.length);
 };
 
+const SHOT_COUNT_OPTIONS = [3, 5, 7, 10];
+
 export const Combine: React.FC<CombineProps> = ({ wedge, onComplete, onBack }) => {
+  const [targetShots, setTargetShots] = useState<number | null>(null);
   const [step, setStep] = useState<SwingLength>('fullSwing');
   const [stepIdx, setStepIdx] = useState(0);
   const [shotsBySwing, setShotsBySwing] = useState<Record<SwingLength, number[]>>({
@@ -42,9 +45,15 @@ export const Combine: React.FC<CombineProps> = ({ wedge, onComplete, onBack }) =
 
   const addShot = () => {
     if (!entryValid) return;
-    setShotsBySwing((prev) => ({ ...prev, [step]: [...prev[step], parsedEntry] }));
+    const newShots = [...shotsBySwing[step], parsedEntry];
+    setShotsBySwing((prev) => ({ ...prev, [step]: newShots }));
     setCurrentEntry('');
-    inputRef.current?.focus();
+    // Auto-advance when target reached
+    if (targetShots !== null && newShots.length >= targetShots) {
+      setTimeout(() => moveToNextWithShots({ ...shotsBySwing, [step]: newShots }), 320);
+    } else {
+      inputRef.current?.focus();
+    }
   };
 
   const removeShot = (idx: number) => {
@@ -55,7 +64,7 @@ export const Combine: React.FC<CombineProps> = ({ wedge, onComplete, onBack }) =
     if (e.key === 'Enter') { e.preventDefault(); addShot(); }
   };
 
-  const moveToNext = () => {
+  const moveToNextWithShots = (shots: Record<SwingLength, number[]>) => {
     if (stepIdx < SWING_ORDER.length - 1) {
       const nextIdx = stepIdx + 1;
       setStep(SWING_ORDER[nextIdx]);
@@ -63,11 +72,13 @@ export const Combine: React.FC<CombineProps> = ({ wedge, onComplete, onBack }) =
       setCurrentEntry('');
     } else {
       const avgs: Partial<Record<SwingLength, number>> = {};
-      for (const s of SWING_ORDER) avgs[s] = computeAverage(shotsBySwing[s]);
+      for (const s of SWING_ORDER) avgs[s] = computeAverage(shots[s]);
       setFinalAverages(avgs);
       setDone(true);
     }
   };
+
+  const moveToNext = () => moveToNextWithShots(shotsBySwing);
 
   const moveToPrev = () => {
     if (stepIdx > 0) {
@@ -128,6 +139,43 @@ export const Combine: React.FC<CombineProps> = ({ wedge, onComplete, onBack }) =
         >
           {saving ? 'Saving…' : 'Save to matrix'}
         </button>
+      </div>
+    );
+  }
+
+  // ── Setup screen ───────────────────────────────────────────────────────────
+  if (targetShots === null) {
+    return (
+      <div className="px-4 py-5">
+        <button onClick={onBack} className="flex items-center gap-1 text-sm text-gray-400 active:text-gray-600 mb-5 py-1">
+          <ArrowLeft size={16} /> Back to bag
+        </button>
+
+        <div className="mb-6">
+          <h2 className="text-xl font-bold text-gray-800">Combine</h2>
+          <p className="text-sm text-gray-500 mt-0.5">{wedge.club} · {wedge.loft}°</p>
+        </div>
+
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
+          <p className="text-sm font-semibold text-gray-700 mb-1">Shots per swing</p>
+          <p className="text-xs text-gray-400 mb-4">How many shots do you want to hit for each swing length?</p>
+          <div className="grid grid-cols-4 gap-2">
+            {SHOT_COUNT_OPTIONS.map((n) => (
+              <button
+                key={n}
+                onClick={() => setTargetShots(n)}
+                className="flex flex-col items-center justify-center bg-gray-50 active:bg-[#4f6b35] active:text-white border-2 border-gray-100 active:border-[#4f6b35] rounded-2xl py-5 transition-colors group"
+              >
+                <span className="text-3xl font-bold text-gray-800 group-active:text-white">{n}</span>
+                <span className="text-[11px] text-gray-400 group-active:text-white mt-1">shots</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <p className="text-center text-xs text-gray-300">
+          You'll hit {SHOT_COUNT_OPTIONS[0]}–{SHOT_COUNT_OPTIONS[SHOT_COUNT_OPTIONS.length - 1]} shots for each of the 4 swing lengths · {SWING_LABELS['fullSwing']}, {SWING_LABELS['threeQuarter']}, {SWING_LABELS['half']}, {SWING_LABELS['quarter']}
+        </p>
       </div>
     );
   }
@@ -197,6 +245,18 @@ export const Combine: React.FC<CombineProps> = ({ wedge, onComplete, onBack }) =
           </button>
         </div>
 
+        {/* Shot progress pips */}
+        <div className="flex gap-1.5 mb-3">
+          {Array.from({ length: targetShots }).map((_, i) => (
+            <div
+              key={i}
+              className={`h-1.5 flex-1 rounded-full transition-all ${
+                i < currentShots.length ? 'bg-[#4f6b35]' : 'bg-gray-200'
+              }`}
+            />
+          ))}
+        </div>
+
         {/* Shot chips */}
         {currentShots.length > 0 ? (
           <>
@@ -216,7 +276,7 @@ export const Combine: React.FC<CombineProps> = ({ wedge, onComplete, onBack }) =
             <div className="bg-[#4f6b35]/5 rounded-xl px-4 py-2.5 text-center">
               <span className="text-xs text-gray-400">Average · </span>
               <span className="text-[#4f6b35] font-bold text-lg">{avg} yds</span>
-              <span className="text-xs text-gray-400 ml-1">({currentShots.length} shot{currentShots.length !== 1 ? 's' : ''})</span>
+              <span className="text-xs text-gray-400 ml-1">({currentShots.length} / {targetShots})</span>
             </div>
           </>
         ) : (
@@ -239,9 +299,11 @@ export const Combine: React.FC<CombineProps> = ({ wedge, onComplete, onBack }) =
           disabled={currentShots.length === 0}
           className="flex-1 bg-[#e59d4b] active:bg-[#d08d3a] text-white py-4 rounded-xl font-bold text-base transition-colors disabled:opacity-30"
         >
-          {stepIdx === SWING_ORDER.length - 1
-            ? 'Finish combine ✓'
-            : `Next: ${SWING_LABELS[SWING_ORDER[stepIdx + 1]]} →`}
+          {currentShots.length < targetShots
+            ? `${targetShots - currentShots.length} more shot${targetShots - currentShots.length !== 1 ? 's' : ''} · skip →`
+            : stepIdx === SWING_ORDER.length - 1
+              ? 'Finish combine ✓'
+              : `Next: ${SWING_LABELS[SWING_ORDER[stepIdx + 1]]} →`}
         </button>
       </div>
     </div>

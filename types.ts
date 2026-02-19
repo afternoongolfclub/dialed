@@ -53,4 +53,4 @@ export interface CombineSession {
 
 // ─── App View ────────────────────────────────────────────────────────────────
 
-export type AppView = 'matrix' | 'bag' | 'combine';
+export type AppView = 'matrix' | 'bag' | 'combine' | 'profile';

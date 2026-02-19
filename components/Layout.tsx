@@ -1,7 +1,6 @@
 import React from 'react';
 import { AppView } from '../types.ts';
-import { Grid, ShoppingBag, Crosshair, LogOut } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext.tsx';
+import { Grid, ShoppingBag, Crosshair, User } from 'lucide-react';
 
 interface LayoutProps {
   view: AppView;
@@ -14,11 +13,10 @@ const NAV_ITEMS: { view: AppView; label: string; Icon: React.ElementType }[] = [
   { view: 'matrix',  label: 'Matrix',   Icon: Grid },
   { view: 'bag',     label: 'The Bag',  Icon: ShoppingBag },
   { view: 'combine', label: 'Combine',  Icon: Crosshair },
+  { view: 'profile', label: 'Profile',  Icon: User },
 ];
 
 export const Layout: React.FC<LayoutProps> = ({ view, onChangeView, children, hideNav }) => {
-  const { user, logout } = useAuth();
-
   return (
     <div className="min-h-screen bg-[#f5f5f0] flex flex-col max-w-2xl mx-auto">
       {/* Top bar — sits below Dynamic Island / notch */}
@@ -26,16 +24,6 @@ export const Layout: React.FC<LayoutProps> = ({ view, onChangeView, children, hi
         style={{ paddingTop: 'max(12px, env(safe-area-inset-top))', paddingBottom: '12px' }}>
         <div className="flex items-center">
           <img src="/logo.png" alt="Dialed" className="h-7 w-auto" />
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-gray-400 hidden sm:block">{user?.name}</span>
-          <button
-            onClick={logout}
-            title="Sign out"
-            className="flex items-center justify-center w-9 h-9 text-gray-400 active:text-gray-600 rounded-xl active:bg-gray-100 transition-colors"
-          >
-            <LogOut size={18} />
-          </button>
         </div>
       </header>
 
