@@ -13,7 +13,6 @@ const NAV_ITEMS: { view: AppView; label: string; Icon: React.ElementType }[] = [
   { view: 'matrix',  label: 'Matrix',   Icon: Grid },
   { view: 'bag',     label: 'The Bag',  Icon: ShoppingBag },
   { view: 'combine', label: 'Combine',  Icon: Crosshair },
-  { view: 'profile', label: 'Profile',  Icon: User },
 ];
 
 export const Layout: React.FC<LayoutProps> = ({ view, onChangeView, children, hideNav }) => {
@@ -22,9 +21,17 @@ export const Layout: React.FC<LayoutProps> = ({ view, onChangeView, children, hi
       {/* Top bar — sits below Dynamic Island / notch */}
       <header className="bg-white border-b border-gray-100 px-4 flex items-center justify-between sticky top-0 z-10"
         style={{ paddingTop: 'max(12px, env(safe-area-inset-top))', paddingBottom: '12px' }}>
-        <div className="flex items-center">
+        <button onClick={() => onChangeView('matrix')} className="flex items-center active:opacity-70 transition-opacity">
           <img src="/logo.png" alt="Dialed" className="h-7 w-auto" />
-        </div>
+        </button>
+        <button
+          onClick={() => onChangeView('profile')}
+          className={`flex items-center justify-center w-9 h-9 rounded-xl transition-colors active:bg-gray-100 ${
+            view === 'profile' ? 'text-[#4f6b35]' : 'text-gray-400'
+          }`}
+        >
+          <User size={20} strokeWidth={view === 'profile' ? 2.5 : 1.8} />
+        </button>
       </header>
 
       {/* Main content — pb-safe adds room for nav + home indicator */}
