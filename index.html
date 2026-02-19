@@ -2,13 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Dialed — Wedge Matrix</title>
 
     <!-- PWA & Mobile Meta -->
     <meta name="theme-color" content="#4f6b35">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="description" content="Dial in your wedge distances with a personalized yardage matrix.">
     <link rel="icon" type="image/png" href="/apple-touch-icon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -17,9 +18,30 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+      * {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+      }
       body {
         font-family: 'Inter', sans-serif;
         background-color: #f5f5f0;
+        /* Prevent iOS text size inflation */
+        -webkit-text-size-adjust: 100%;
+        overscroll-behavior: none;
+      }
+      input, select, textarea {
+        /* Prevent iOS zoom on focus — must be 16px+ */
+        font-size: 16px !important;
+      }
+      /* Safe area support for notched/Dynamic Island iPhones */
+      .safe-bottom {
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+      .pb-safe {
+        padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+      }
+      .pt-safe {
+        padding-top: env(safe-area-inset-top);
       }
     </style>
   </head>

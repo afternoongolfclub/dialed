@@ -28,79 +28,89 @@ export const Auth: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#f5f5f0] px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#f5f5f0] px-5"
+      style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+
       {/* Logo */}
       <div className="mb-8 flex flex-col items-center">
-        <img src="/logo.png" alt="Dialed" className="w-64 h-auto mb-2" />
+        <img src="/logo.png" alt="Dialed" className="w-56 h-auto mb-2" />
         <p className="text-sm text-gray-500">Your personal wedge yardage matrix</p>
       </div>
 
-      <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm p-8 border border-gray-100">
-        <h2 className="text-xl font-semibold text-gray-800 mb-6 text-center">
-          {isLogin ? 'Welcome back' : 'Create account'}
-        </h2>
+      <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="px-6 pt-6 pb-2">
+          <h2 className="text-lg font-semibold text-gray-800 mb-5 text-center">
+            {isLogin ? 'Welcome back' : 'Create account'}
+          </h2>
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {!isLogin && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name"
-                required={!isLogin}
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#4f6b35] focus:border-transparent"
-              />
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 leading-snug">
+              {error}
             </div>
           )}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              required
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#4f6b35] focus:border-transparent"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#4f6b35] focus:border-transparent"
-            />
-          </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#4f6b35] hover:bg-[#3d5429] text-white font-semibold py-2.5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Please wait…' : isLogin ? 'Sign In' : 'Create Account'}
-          </button>
-        </form>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {!isLogin && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Name</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your name"
+                  required={!isLogin}
+                  autoComplete="name"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4f6b35] focus:border-transparent bg-gray-50"
+                />
+              </div>
+            )}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                required
+                autoComplete="email"
+                inputMode="email"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4f6b35] focus:border-transparent bg-gray-50"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                autoComplete={isLogin ? 'current-password' : 'new-password'}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4f6b35] focus:border-transparent bg-gray-50"
+              />
+            </div>
 
-        <p className="mt-5 text-center text-sm text-gray-500">
-          {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
-          <button
-            onClick={() => { setIsLogin(!isLogin); setError(''); }}
-            className="text-[#4f6b35] font-medium hover:underline"
-          >
-            {isLogin ? 'Sign up' : 'Sign in'}
-          </button>
-        </p>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-[#4f6b35] active:bg-[#3d5429] text-white font-semibold py-3.5 rounded-xl transition-colors disabled:opacity-50 mt-2"
+            >
+              {loading ? 'Please wait…' : isLogin ? 'Sign In' : 'Create Account'}
+            </button>
+          </form>
+        </div>
+
+        <div className="px-6 py-4 border-t border-gray-50 text-center">
+          <p className="text-sm text-gray-500">
+            {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
+            <button
+              onClick={() => { setIsLogin(!isLogin); setError(''); }}
+              className="text-[#4f6b35] font-semibold"
+            >
+              {isLogin ? 'Sign up' : 'Sign in'}
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );
