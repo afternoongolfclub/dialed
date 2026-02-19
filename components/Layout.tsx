@@ -23,9 +23,8 @@ export const Layout: React.FC<LayoutProps> = ({ view, onChangeView, children, hi
     <div className="min-h-screen bg-[#f5f5f0] flex flex-col max-w-2xl mx-auto">
       {/* Top bar */}
       <header className="bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between sticky top-0 z-10">
-        <div className="flex items-center gap-2.5">
-          <img src="/icon.svg" alt="" className="w-7 h-7" />
-          <span className="font-bold text-[#4f6b35] text-lg tracking-tight">dialed</span>
+        <div className="flex items-center">
+          <img src="/logo.png" alt="Dialed" className="h-8 w-auto" />
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-gray-400 hidden sm:block">{user?.name}</span>

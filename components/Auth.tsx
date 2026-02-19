@@ -31,9 +31,8 @@ export const Auth: React.FC = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#f5f5f0] px-4">
       {/* Logo */}
       <div className="mb-8 flex flex-col items-center">
-        <img src="/icon.svg" alt="Dialed" className="w-24 h-24 mb-4" />
-        <h1 className="text-4xl font-bold text-[#4f6b35] tracking-tight">dialed</h1>
-        <p className="text-sm text-gray-500 mt-1">Your personal wedge yardage matrix</p>
+        <img src="/logo.png" alt="Dialed" className="w-64 h-auto mb-2" />
+        <p className="text-sm text-gray-500">Your personal wedge yardage matrix</p>
       </div>
 
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm p-8 border border-gray-100">
