@@ -22,7 +22,7 @@ export const Layout: React.FC<LayoutProps> = ({ view, onChangeView, children, hi
       <header className="bg-white border-b border-gray-100 px-4 flex items-center justify-between sticky top-0 z-10"
         style={{ paddingTop: 'max(12px, env(safe-area-inset-top))', paddingBottom: '12px' }}>
         <button onClick={() => onChangeView('matrix')} className="flex items-center active:opacity-70 transition-opacity">
-          <img src="/logo.png" alt="Dialed" className="h-7 w-auto" />
+          <img src="/logo.png" alt="Dialed" className="h-10 w-auto" />
         </button>
         <button
           onClick={() => onChangeView('profile')}
